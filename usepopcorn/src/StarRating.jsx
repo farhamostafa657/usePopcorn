@@ -20,7 +20,8 @@ const textStyle = {
   margin: "0",
 };
 function StarRating({ maxRating = 5 }) {
-  const [rating, setRating] = useState(10);
+  const [rating, setRating] = useState(0);
+  const [tempRating, setTempRating] = useState(0);
   function handleRating(i) {
     setRating(i);
   }
@@ -28,10 +29,15 @@ function StarRating({ maxRating = 5 }) {
     <div style={containerStyle}>
       <div style={starComponentStyle}>
         {Array.from({ length: maxRating }, (_, i) => (
-          <Star onRating={() => handleRating(i + 1)} full={rating >= i + 1} />
+          <Star
+            onRating={() => handleRating(i + 1)}
+            full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
+            onHoverIn={() => setTempRating(i + 1)}
+            onHoverOut={() => setTempRating(0)}
+          />
         ))}
       </div>
-      <p style={textStyle}>{rating || ""}</p>
+      <p style={textStyle}>{tempRating || rating || ""}</p>
     </div>
   );
 }
@@ -41,9 +47,15 @@ const starStyle = {
   color: "orange",
 };
 
-function Star({ full, onRating }) {
+function Star({ full, onRating, onHoverIn, onHoverOut }) {
   return (
-    <span style={starStyle} role="button" onClick={onRating}>
+    <span
+      style={starStyle}
+      role="button"
+      onClick={onRating}
+      onMouseEnter={onHoverIn}
+      onMouseLeave={onHoverOut}
+    >
       {full ? (
         <FontAwesomeIcon icon={solidStar} />
       ) : (
