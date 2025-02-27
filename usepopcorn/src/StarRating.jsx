@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons"; // Empty star
-
+import PropTypes from "prop-types";
 import { useState } from "react";
 
 const containerStyle = {
@@ -14,19 +14,33 @@ const starComponentStyle = {
   display: "flex",
   gap: "3px",
 };
-
-const textStyle = {
-  lineHieght: "1",
-  margin: "0",
+StarRating.propTypes = {
+  maxRating: PropTypes.number,
 };
-function StarRating({ maxRating = 5 }) {
-  const [rating, setRating] = useState(0);
+
+function StarRating({
+  maxRating = 5,
+  size = 24,
+  color = "red",
+  className = "",
+  messages = [],
+  defaultRating = 0,
+  onSetRating,
+}) {
+  const [rating, setRating] = useState(defaultRating);
   const [tempRating, setTempRating] = useState(0);
+  const textStyle = {
+    lineHieght: "1",
+    margin: "0",
+    fontSize: `${size}px`,
+    color,
+  };
   function handleRating(i) {
     setRating(i);
+    onSetRating(i);
   }
   return (
-    <div style={containerStyle}>
+    <div style={containerStyle} className={className}>
       <div style={starComponentStyle}>
         {Array.from({ length: maxRating }, (_, i) => (
           <Star
@@ -34,20 +48,26 @@ function StarRating({ maxRating = 5 }) {
             full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
             onHoverIn={() => setTempRating(i + 1)}
             onHoverOut={() => setTempRating(0)}
+            size={size}
+            color={color}
           />
         ))}
       </div>
-      <p style={textStyle}>{tempRating || rating || ""}</p>
+      <p style={textStyle}>
+        {messages.length === maxRating
+          ? messages[tempRating ? tempRating - 1 : rating - 1]
+          : tempRating || rating || ""}
+      </p>
     </div>
   );
 }
 
-const starStyle = {
-  cursor: "pointer",
-  color: "orange",
-};
-
-function Star({ full, onRating, onHoverIn, onHoverOut }) {
+function Star({ full, onRating, onHoverIn, onHoverOut, size, color }) {
+  const starStyle = {
+    cursor: "pointer",
+    color,
+    fontSize: `${size}px`,
+  };
   return (
     <span
       style={starStyle}
