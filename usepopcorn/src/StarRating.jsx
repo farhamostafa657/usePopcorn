@@ -16,6 +16,12 @@ const starComponentStyle = {
 };
 StarRating.propTypes = {
   maxRating: PropTypes.number,
+  defaultRating: PropTypes.number,
+  size: PropTypes.number,
+  color: PropTypes.string,
+  className: PropTypes.string,
+  messages: PropTypes.array,
+  onSetRating: PropTypes.func,
 };
 
 function StarRating({
@@ -37,7 +43,7 @@ function StarRating({
   };
   function handleRating(i) {
     setRating(i);
-    onSetRating(i);
+    onSetRating(() => i);
   }
   return (
     <div style={containerStyle} className={className}>
