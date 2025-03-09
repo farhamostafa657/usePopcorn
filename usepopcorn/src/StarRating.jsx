@@ -27,7 +27,7 @@ StarRating.propTypes = {
 function StarRating({
   maxRating = 5,
   size = 24,
-  color = "red",
+  color = "orange",
   className = "",
   messages = [],
   defaultRating = 0,
