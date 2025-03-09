@@ -2,6 +2,7 @@ import { use, useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 import { useLocaLStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 
 const key = "94cb36f0";
 
@@ -12,7 +13,6 @@ export default function App() {
   const [query, setQuery] = useState("inception");
   const [selectedId, setSelectedId] = useState(null);
   const { movies, isLoading, error } = useMovies(query);
-  // const [watched, setWatched] = useState([]);
   const [watched, setWatched] = useLocaLStorageState([], "watched");
 
   function handleSelectedMovie(id) {
@@ -104,18 +104,13 @@ function Logo() {
 function Search({ query, setQuery }) {
   const inputEl = useRef(null);
 
-  useEffect(() => {
-    function callBack(e) {
-      if (document.activeElement === inputEl.current) return;
-      if (e.code === "Enter") {
-        inputEl.current.focus();
-        setQuery("");
-      }
-    }
+  useKey("Enter", () => {
+    if (document.activeElement === inputEl.current) return;
 
-    document.addEventListener("keydown", callBack);
-    return () => document.removeEventListener("keydown", callBack);
-  }, [setQuery]);
+    inputEl.current.focus();
+    setQuery("");
+  });
+
   return (
     <input
       className="search"
@@ -283,20 +278,7 @@ function MovieDetails({
     };
   }, [movie?.Title]);
 
-  useEffect(() => {
-    function callEvent(e) {
-      if (e.code == "Escape") {
-        handleCloseMovie();
-        console.log("closed");
-      }
-    }
-
-    document.addEventListener("keydown", callEvent);
-
-    return function () {
-      document.removeEventListener("keydown", callEvent);
-    };
-  }, [handleCloseMovie]);
+  useKey("Escape", handleCloseMovie);
   return (
     <div className="details">
       {loading ? (
